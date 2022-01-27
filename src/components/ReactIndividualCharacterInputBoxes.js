@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import fillPolyfill from './fillPolyfill'
 import InputBox from './InputBox'
 import _ from 'lodash'
 
