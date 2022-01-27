@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/worddit/static/css/main.a0d45954.css",
+    "main.js": "/worddit/static/js/main.8011eca7.js",
+    "static/media/bunny.svg": "/worddit/static/media/bunny.a663412897c1b272f87544e563a87647.svg",
+    "static/media/logo.svg": "/worddit/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/worddit/index.html",
+    "main.a0d45954.css.map": "/worddit/static/css/main.a0d45954.css.map",
+    "main.8011eca7.js.map": "/worddit/static/js/main.8011eca7.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a0d45954.css",
+    "static/js/main.8011eca7.js"
+  ]
+}
