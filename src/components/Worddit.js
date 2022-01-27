@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import RICIBs from './ReactIndividualCharacterInputBoxes'
-import { Button, Grid, Typography, Input } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete'
 import SendIcon from '@mui/icons-material/Send'
-import { IconButton, Container} from '@mui/material';
+import { Container} from '@mui/material';
 import { dictionary } from '../assets/dictionary';
 import InfiniteScroll from 'react-infinite-scroll-component';
 export default function Worddit (props) {
@@ -30,7 +30,6 @@ export default function Worddit (props) {
   }])
 
   const handleOutput = (string) => {
-    console.log(string)
   }
 
   const setModuleOutput = (target, index) => {
@@ -137,7 +136,6 @@ export default function Worddit (props) {
     }
     const blackRegex = blackLetters.length > 0 ? `(?=^[^${blackLetters.filter(char => (char && char.match(`[^${yellowFilter}${greenLetters.join('')}]`))).join('')}]+$)`: '';
     const greenRegex = `${greenLetters.join('')}` 
-    console.log(`^${blackRegex}${yellowRegex}${greenRegex}$`);
     const newFiltered = dictionary.filter((word) => word.match(`^${blackRegex}${yellowRegex}${greenRegex}$`));
     setFiltered(newFiltered);
     setCurrent(newFiltered.slice(0, increment));
