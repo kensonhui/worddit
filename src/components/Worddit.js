@@ -6,6 +6,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
 import { dictionary } from "../assets/dictionary";
 import InfiniteScroll from "react-infinite-scroll-component";
+import wordFilter from "../services/wordFilter";
 export default function Worddit(props) {
   const increment = 50;
 
@@ -22,7 +23,7 @@ export default function Worddit(props) {
   });
   const [hasMore, setHasMore] = useState(true);
   const [current, setCurrent] = useState(
-    dictionary.slice(wordCount.prev, wordCount.next)
+    filtered.slice(wordCount.prev, wordCount.next)
   );
 
   // For RICBs functionality
@@ -124,70 +125,13 @@ export default function Worddit(props) {
   }, [wordCount, filtered, hasMore]);
 
   const filterWords = () => {
-    let blackLetters = [];
-    let yellowLetters = Array(numLetters)
-      .fill([])
-      .map(() => []);
-    let greenLetters = Array(numLetters).fill(".");
-    let occurancesRegex = "";
-    rows.forEach(({ colourArray, characterArray }) => {
-      const blackLettersOfWord = [];
-      const yellowLettersOfWord = [];
-      const greenLettersOfWord = [];
-      for (let i = 0; i < numLetters; i++) {
-        if (colourArray[i] === "black") {
-          blackLetters.push(characterArray[i]);
-          blackLettersOfWord.push(characterArray[i]);
-        } else if (colourArray[i] === "yellow") {
-          yellowLetters[i].push(characterArray[i]);
-          yellowLettersOfWord.push(characterArray[i]);
-        } else if (colourArray[i] === "green") {
-          greenLetters[i] = characterArray[i];
-          greenLettersOfWord.push(characterArray[i]);
-        }
-      }
-      // Max/min nubmer occurances for each character
-      const yellowAndGreenFilter = yellowLettersOfWord.concat(greenLettersOfWord);
-      const yellowAndGreenSet = [...new Set(yellowAndGreenFilter)];
-      yellowAndGreenSet.forEach((char) => {
-        let minOccurances = yellowAndGreenFilter.filter((letter) => letter === char).length;
-        if (minOccurances > 1)
-        occurancesRegex += `(?=^([^${char}\\n]*${char}[^${char}\\n]*){${minOccurances},${blackLettersOfWord.includes(char)? minOccurances: ''}}$)`;
-      });
-    });
-    let yellowRegex = "";
-    let yellowFilter = "";
-    for (let i = 0; i < numLetters; i++) {
-      yellowRegex +=
-        yellowLetters[i].length > 0
-          ? `(?=^${".".repeat(i)}[^${yellowLetters[i].join("")}]${".".repeat(
-              numLetters - i - 1
-            )}$)`
-          : "";
-      for (let j = 0; j < yellowLetters[i].length; j++) {
-        yellowRegex += `(?=^.*${yellowLetters[i][j]}.*)`;
-        yellowFilter += yellowLetters[i][j];
-      }
-    }
-    const blackRegex =
-      blackLetters.length > 0
-        ? `(?=^[^${blackLetters
-            .filter(
-              (char) =>
-                char && char.match(`[^${yellowFilter}${greenLetters.join("")}]`)
-            )
-            .join("")}]+$)`
-        : "";
-    const greenRegex = `${greenLetters.join("")}`;
-    const completeRegex = `^${blackRegex}${yellowRegex}${occurancesRegex}${greenRegex}$`;
-    const newFiltered = dictionary.filter((word) =>
-      word.match(completeRegex)
-    );
+    const newFiltered = wordFilter(dictionary, rows, numLetters);
     setFiltered(newFiltered);
     setCurrent(newFiltered.slice(0, increment));
     setWordCount({ prev: 0, next: increment });
   };
-
+  
+  // Suggestion Functionality
   const getSuggestion = () => {
     let maxScore = 0;
     let maxWord = "";
@@ -225,6 +169,9 @@ export default function Worddit(props) {
     setSuggestedWord(maxWord);
   };
 
+  useEffect(() => {
+    getSuggestion();
+  }, [filtered]);
   return (
     <Grid align="center">
       <Grid item container direction="column">
@@ -268,10 +215,9 @@ export default function Worddit(props) {
       </Grid>
       
       <Box sx={{display: 'flex', flexDirection:"column", width: 200, p: 3}} >
-      <Button type="submit" variant="contained" endIcon={<SendIcon />} onClick={filterWords}>
-        Filter
-      </Button>
-        <Button onClick={getSuggestion}>Give Suggestion</Button>
+        <Button type="submit" variant="contained" endIcon={<SendIcon />} onClick={filterWords}>
+          Filter
+        </Button>
         <p>Suggested Word: {suggestedWord}</p>
       </Box>
 
